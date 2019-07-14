@@ -1,0 +1,1 @@
+{"token": "YourToken", "pattern": "{} - {} P", "sorted": 0, "splitter": 1, "vertical": 0, "horizontal_separator" : ", ", "maxcount": 3}
