@@ -8,6 +8,12 @@ def update_dons():
     while(True):
         
         config = json.load(open('config.txt', 'r'))
+        
+        if config['vertical']:
+            config['pattern'] += '\n'
+        else:
+            config['pattern'] += config['horizontal_separator']
+
 
         url = "https://streamlabs.com/api/donations"
         querystring = {"access_token" : config['token']}
@@ -42,8 +48,3 @@ def update_dons():
         time.sleep(30)
 
 Timer(1, update_dons).start()
-
-if config['vertical']:
-    config['pattern'] += '\n'
-else:
-    config['pattern'] += config['horizontal_separator']
