@@ -13,7 +13,7 @@ if you need, then you can use it on windows, for less consumption of computer re
 
 > "pattern" - Text pattern for label
 
-> "sorted" - Sort donations by amout [1 - yes, 0 - no]
+> "sorted" - Sort donations by amount [1 - yes, 0 - no]
 
 > "splitter" - Split between stars (only for vertical mode) [1 - yes, 0 - no]
 
