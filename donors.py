@@ -50,7 +50,7 @@ def update_dons():
                 break
 
             if config['splitter'] and config['vertical']:
-                tabledons.append("\xe2\xe2\xe2 \xe2\xe2\xe2 \xe2\xe2\xe2 \xe2\xe2\xe2\n")
+                tabledons.append("★★★ ★★★ ★★★ ★★★\n")
 
             tabledons.append(
                 config['pattern'].format(value['donator']['name'], format(float(value['amount']), '.2f'))
