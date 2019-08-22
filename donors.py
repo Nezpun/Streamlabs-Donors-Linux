@@ -34,7 +34,7 @@ def update_dons():
             config['pattern'] += config['horizontal_separator']
 
         url = "https://streamlabs.com/api/donations"
-        querystring = {"access_token" : config['token']}
+        querystring = {"access_token": config['token']}
         response = requests.request("GET", url, params=querystring)
 
         if response.status_code == 401:
@@ -68,7 +68,7 @@ def update_dons():
             sex_iterator += 1
 
         with open('donors.txt', 'w', encoding='utf-8') as f:
-                f.writelines(tabledons)
+            f.writelines(tabledons)
 
         print(tabledons)
         f.close()
