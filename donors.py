@@ -18,6 +18,20 @@ def error_(msg):
     quit()
 
 
+#
+# Check server response
+#
+def check_server_response_code(statuscode):
+    if statuscode == 401:
+        error_('You not authenticated on Streamlabs. Exiting.')
+
+    if statuscode == 403:
+        error_('Server return forbidden response. Exiting.')
+
+    if (statuscode == 500) or (statuscode == 503):
+        error_('Server error. Exiting.')
+
+
 if os.path.isfile('config.txt'):
     print('Loading configuration')
     config = json.load(open('config.txt', 'r'))
@@ -37,14 +51,7 @@ def update_dons():
         querystring = {"access_token": config['token']}
         response = requests.request("GET", url, params=querystring)
 
-        if response.status_code == 401:
-            error_('You not authenticated on Streamlabs. Exiting.')
-
-        if response.status_code == 403:
-            error_('Server return forbidden response. Exiting.')
-
-        if (response.status_code == 500) or (response.status_code == 503):
-            error_('Server error. Exiting.')
+        check_server_response_code(response.status_code)
 
         jsondons = json.loads(response.text)
         tabledons = []
@@ -61,10 +68,11 @@ def update_dons():
 
             if config['splitter'] and config['vertical']:
                 tabledons.append("★★★ ★★★ ★★★ ★★★\n")
-
+            print(value)
             tabledons.append(
-                config['pattern'].format(value['donator']['name'], format(float(value['amount']), '.2f'))
+                config['pattern'].format(value['donator']['name'], format(value['amount_label']))
             )
+
             sex_iterator += 1
 
         with open('donors.txt', 'w', encoding='utf-8') as f:
