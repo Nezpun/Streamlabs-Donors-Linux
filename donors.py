@@ -7,17 +7,26 @@ if sys.version_info[0] < 3:
 
 import requests
 import json, time, os
-from operator import itemgetter
 from threading import Timer
+
+
+#
+# Display message and quit application
+#
+def error_(msg):
+    print(msg)
+    quit()
+
 
 if os.path.isfile('config.txt'):
     print('Loading configuration')
     config = json.load(open('config.txt', 'r'))
 else:
-    Error_('Cannot find file config.txt')
+    error_('Cannot find file config.txt')
+
 
 def update_dons():
-    while(True):
+    while True:
 
         if config['vertical']:
             config['pattern'] += '\n'
@@ -28,14 +37,14 @@ def update_dons():
         querystring = {"access_token" : config['token']}
         response = requests.request("GET", url, params=querystring)
 
-        if (response.status_code == 401):
-            Error_('You not authenticated on Streamlabs. Exiting.')
+        if response.status_code == 401:
+            error_('You not authenticated on Streamlabs. Exiting.')
 
-        if (response.status_code == 403):
-            Error_('Server return forbidden response. Exiting.')
+        if response.status_code == 403:
+            error_('Server return forbidden response. Exiting.')
 
         if (response.status_code == 500) or (response.status_code == 503):
-            Error_('Server error. Exiting.')
+            error_('Server error. Exiting.')
 
         jsondons = json.loads(response.text)
         tabledons = []
@@ -43,7 +52,7 @@ def update_dons():
 
         donlist = jsondons['donations']
         if config['sorted']:
-            donlist = sorted(jsondons['donations'], key = lambda i: float(i['amount']), reverse = True)
+            donlist = sorted(jsondons['donations'], key=lambda i: float(i['amount']), reverse=True)
 
         sex_iterator = 0
         for value in donlist:
@@ -58,18 +67,12 @@ def update_dons():
             )
             sex_iterator += 1
 
-        with open('donors.txt', 'w', encoding = 'utf-8') as f:
+        with open('donors.txt', 'w', encoding='utf-8') as f:
                 f.writelines(tabledons)
 
         print(tabledons)
         f.close()
         time.sleep(30)
 
-Timer(1, update_dons).start()
 
-#
-# Display message and quit application
-#
-def Error_(msg):
-    print(msg)
-    quit()
+Timer(1, update_dons).start()
