@@ -1,23 +1,33 @@
-import requests, json, time
+import requests, json, time, os
 from operator import itemgetter
 from threading import Timer
 
-config = json.load(open('config.txt', 'r'))
+if os.path.isfile('config.txt'):
+    print('Loading configuration')
+    config = json.load(open('config.txt', 'r'))
+else:
+    Error_('Cannot find file config.txt')
 
 def update_dons():
     while(True):
-        
-        config = json.load(open('config.txt', 'r'))
-        
+
         if config['vertical']:
             config['pattern'] += '\n'
         else:
             config['pattern'] += config['horizontal_separator']
 
-
         url = "https://streamlabs.com/api/donations"
         querystring = {"access_token" : config['token']}
         response = requests.request("GET", url, params=querystring)
+
+        if (response.status_code == 401):
+            Error_('You not authenticated on Streamlabs. Exiting.')
+
+        if (response.status_code == 403):
+            Error_('Server return forbidden response. Exiting.')
+
+        if (response.status_code == 500) or (response.status_code == 503):
+            Error_('Server error. Exiting.')
 
         jsondons = json.loads(response.text)
         tabledons = []
@@ -33,7 +43,7 @@ def update_dons():
                 break
 
             if config['splitter'] and config['vertical']:
-                tabledons.append("★★★ ★★★ ★★★ ★★★\n")
+                tabledons.append("\xe2\xe2\xe2 \xe2\xe2\xe2 \xe2\xe2\xe2 \xe2\xe2\xe2\n")
 
             tabledons.append(
                 config['pattern'].format(value['donator']['name'], format(float(value['amount']), '.2f'))
@@ -48,3 +58,10 @@ def update_dons():
         time.sleep(30)
 
 Timer(1, update_dons).start()
+
+#
+# Display message and quit application
+#
+def Error_(msg):
+    print(msg)
+    quit()
